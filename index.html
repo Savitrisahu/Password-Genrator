@@ -1,48 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Password Generator</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Password Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+    input, button {
+      padding: 8px;
+      margin: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    #result {
+      margin-top: 20px;
+      font-size: 1.2em;
+      font-weight: bold;
+      color: green;
+    }
+    .copy-btn {
+      margin-left: 10px;
+      padding: 6px 12px;
+      font-size: 0.9em;
+      cursor: pointer;
+      border: none;
+      border-radius: 5px;
+      background: #007bff;
+      color: white;
+    }
+    .copy-btn:hover {
+      background: #0056b3;
+    }
+  </style>
 </head>
 <body>
-    welcome to password generator 
-   
+  <h2>🔐 Password Generator</h2>
+  
+  <label for="length">Password length:</label>
+  <input type="number" id="length" min="3" max="50" value="12">
+  <button onclick="generatePassword()">Generate</button>
+  
+  <p id="result"></p>
 
-     <script>
-        class passwordGenerator{
-            constructor(){
-                console.log("Welcome to password Generator");   
-                this.pass = ""             
-            }
+  <script>
+    class PasswordGenerator {
+      constructor() {
+        this.characters = "abcdefghijklmnopqrstuvwxyz";
+        this.capitals = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        this.numbers = "0123456789";
+        this.specials = "!@#$%^&*()_+-=[]{}|;:,.<>?";
+      }
 
-            password(len){
-                const characters = "abcdefghijklmnopqrstuvwxyz";
-                const CapitalChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                const numbers = "1234567890";
-                const special = "!@#$%^&*()"
-
-                if(len<3){
-                    console.log("your password is atleast should be 3 characters long");                    
-                }
-                else{
-                    let i = 0;
-                    while(i<=len){
-                        this.pass += characters[Math.floor(Math.random()*characters.length)]
-                        this.pass += CapitalChars[Math.floor(Math.random()*CapitalChars.length)]
-                        this.pass += numbers[Math.floor(Math.random()*numbers.length)]
-                        this.pass += special[Math.floor(Math.random()*special.length)]
-                        i+=3
-                    }
-                    return this.pass = this.pass.substr(0, len)
-                }
-            }
+      generate(len) {
+        if (len < 3) {
+          return "Password must be at least 3 characters long.";
         }
 
-        let p = new passwordGenerator()
-        // console.log(p.password(5));
-        document.write(p.password(10))
-        
-    </script>
+        const allChars = this.characters + this.capitals + this.numbers + this.specials;
+        let password = "";
+
+        for (let i = 0; i < len; i++) {
+          password += allChars[Math.floor(Math.random() * allChars.length)];
+        }
+
+        return password;
+      }
+    }
+
+    function generatePassword() {
+      const length = parseInt(document.getElementById("length").value);
+      const generator = new PasswordGenerator();
+      const pwd = generator.generate(length);
+
+      const resultEl = document.getElementById("result");
+
+      if (pwd.startsWith("⚠️")) {
+        resultEl.textContent = pwd;
+      } else {
+        resultEl.innerHTML = 
+          `<span id="password">${pwd}</span>
+           <button class="copy-btn" onclick="copyPassword()">Copy</button>`;
+      }
+    }
+
+    function copyPassword() {
+      const passwordText = document.getElementById("password").textContent;
+      navigator.clipboard.writeText(passwordText).then(() => {
+        alert("Password copied to clipboard");
+      });
+    }
+  </script>
 </body>
 </html>
